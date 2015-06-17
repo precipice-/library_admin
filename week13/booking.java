@@ -16,9 +16,6 @@ class bookGUI extends JFrame {
 	private JTextField textField;
 	private JTable table;
 	
-	public void addalltable(){
-		
-	}
 	
 	public bookGUI() {
 		setTitle("도서관리 프로그램_V1.0");
@@ -149,7 +146,7 @@ class bookGUI extends JFrame {
 		
 		menuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				JOptionPane.showMessageDialog(null, "Github 주소 : ");
+				JOptionPane.showMessageDialog(null, "Github 주소 : https://github.com/precipice-/library_admin ");
 			}
 		});
 		
@@ -222,6 +219,7 @@ public class booking{
 			bookcounter ++;
 			
 			Book nbook = new Book(isbn, title, author, publisher, date, category, sale, mTime, price, memo);
+			JOptionPane.showMessageDialog(null, isbn + ", " + title + ", " + author + ", " + publisher + ", " + date + ", " + category + ", " + sale + ", " + mTime + ", " + price + ", " + memo);
 			book.add(nbook);
 			
 			System.out.println(mTime + "시에" + "등록 완료.");
