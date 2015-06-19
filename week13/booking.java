@@ -52,8 +52,7 @@ class bookGUI extends JFrame {
 		//data.addRow("ISBN", "등록번호",  "제목",  "저자",  "출판사",  "출판일",  "카테고리",  "절판여부" , "등록일",  "가격");
 		
 		
-		defaulttablemodel = new DefaultTableModel(columnNames, 0);
-		table = new JTable(defaulttablemodel);
+		table = new JTable(new DefaultTableModel(columnNames, 0));
 		listJs = new JScrollPane(table);
 		panelc.add(listJs);
 		table.setCellSelectionEnabled(true);
@@ -62,7 +61,7 @@ class bookGUI extends JFrame {
 		//panelb  
 		JLabel label = new JLabel("등록 및 검색      :        ");
 		
-		String itemlist[] = {"ISBN", "등록번호",  "제목",  "저자",  "출판사",  "출판일",  "카테고리",  "절판여부" , "등록일",  "가격"};
+		String itemlist[] = {"ISBN", "제목",  "저자",  "출판사",  "출판일",  "카테고리",  "절판여부" , "등록일",  "가격", "메모"};
 		
 		JComboBox comboBox = new JComboBox(itemlist);
 		String finder = comboBox.getSelectedItem().toString();
@@ -89,17 +88,74 @@ class bookGUI extends JFrame {
 		JLabel lblNewLabel_1 = new JLabel("     ");
 		JButton btnNewButton_1 = new JButton("검   색");
 		
+		btnNewButton_1.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				DefaultTableModel defaulttablemodel = (DefaultTableModel) table.getModel();
+				Object[] rowdata = new Object[] {};
+				
+				if (defaulttablemodel.getRowCount() > 0) {
+				    for (int i = defaulttablemodel.getRowCount() - 1; i > -1; i--) {
+				    	defaulttablemodel.removeRow(i);
+				    }
+				}
+				String txtinput = textField.getText();
+				int searchvalue = 0;
+				for (int i = 0; i < 10; i ++){
+					if (finder == itemlist[i]){
+						searchvalue = i;
+					}//콤보박스 값 가져오기
+				}
+				for (int i = 0; i < booking.book.size(); i ++){
+					String sale = null;
+					if (booking.book.get(i).getSale() == true){
+						sale = "Y";
+					} else {sale = "N";}
+					String[] data = {booking.book.get(i).getIsbn(), booking.book.get(i).getTitle(), booking.book.get(i).getAuthor(), booking.book.get(i).getPublisher(), booking.book.get(i).getDate(), sale, booking.book.get(i).getDate_reg(), booking.book.get(i).getCategory(), booking.book.get(i).getPrice(), booking.book.get(i).getMemo()};
+					
+					if (txtinput == data[i]){
+						String data1 = booking.book.get(i).getIsbn();
+						String data2 = booking.book.get(i).getTitle();
+						String data3 = booking.book.get(i).getAuthor();
+						String data4 = booking.book.get(i).getPublisher();
+						String data5 = booking.book.get(i).getDate();
+						String data6 = sale;
+						String data7 = booking.book.get(i).getDate_reg();
+						String data8 = booking.book.get(i).getCategory();
+						String data9 = booking.book.get(i).getPrice();
+						String data10 = booking.book.get(i).getMemo();
+						
+						rowdata = new Object[] {data1, data2, data3, data4, data5, data6, data7, data8, data9, data10};
+						
+						defaulttablemodel.addRow(rowdata);
+						//bookdata.removeAllElements();
+						rowdata = null;
+						//defaulttablemodel.fireTableDataChanged();
+						panelc.updateUI();
+					}
+					table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+					defaulttablemodel.fireTableDataChanged();
+					panelc.updateUI();
+				}
+				table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+				defaulttablemodel.fireTableDataChanged();
+				panelc.updateUI();
+			}
+		});
+		
 		
 		
 		JLabel lblNewLabel_2 = new JLabel("     ");
-		
 		JButton btnNewButton_2 = new JButton("전체 조회");
+		
+		
 		btnNewButton_2.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				final Vector<String> columnNames= new Vector<String>();
-				final Vector<Vector<String>> data = new Vector<Vector<String>>();
-				columnNames.add("ISBN");
+				//final Vector<String> columnNames= new Vector<String>();
+				//final Vector<Vector<String>> data = new Vector<Vector<String>>();
+				//data = 
+				/*columnNames.add("ISBN");
 				columnNames.add("제목");
 				columnNames.add("저자");
 				columnNames.add("출판사");
@@ -108,17 +164,26 @@ class bookGUI extends JFrame {
 				columnNames.add("절판여부");
 				columnNames.add("등록일");
 				columnNames.add("가격");
-				columnNames.add("메모");	
-				final DefaultTableModel defaulttablemodel = new DefaultTableModel(columnNames, data);
+				columnNames.add("메모");*/
+				DefaultTableModel defaulttablemodel = (DefaultTableModel) table.getModel();
+				
+				if (defaulttablemodel.getRowCount() > 0) {
+				    for (int i = defaulttablemodel.getRowCount() - 1; i > -1; i--) {
+				    	defaulttablemodel.removeRow(i);
+				    }
+				}
+				
 				Vector<Vector<String>> allbookdata = new Vector<Vector<String>>();
 				Vector<String> bookdata = new Vector<String>();
-				final JTable table = new JTable(defaulttablemodel);
+				Object[] rowdata = new Object[] {};
+				//final JTable table = new JTable(defaulttablemodel);
 				for (int i = 0; i < booking.book.size(); i++){
 					String sale = null;
 					if (booking.book.get(i).getSale() == true){
 						sale = "Y";
 					} else {sale = "N";}
-					bookdata.add(booking.book.get(i).getIsbn());
+					
+					/*bookdata.add(booking.book.get(i).getIsbn());
 					bookdata.add(booking.book.get(i).getTitle());
 					bookdata.add(booking.book.get(i).getAuthor());
 					bookdata.add(booking.book.get(i).getPublisher());
@@ -127,11 +192,30 @@ class bookGUI extends JFrame {
 					bookdata.add(booking.book.get(i).getDate_reg());
 					bookdata.add(booking.book.get(i).getCategory());
 					bookdata.add(booking.book.get(i).getPrice());
-					bookdata.add(booking.book.get(i).getMemo());
-					allbookdata.add(bookdata);
+					bookdata.add(booking.book.get(i).getMemo());*/
+					
+					String data1 = booking.book.get(i).getIsbn();
+					String data2 = booking.book.get(i).getTitle();
+					String data3 = booking.book.get(i).getAuthor();
+					String data4 = booking.book.get(i).getPublisher();
+					String data5 = booking.book.get(i).getDate();
+					String data6 = sale;
+					String data7 = booking.book.get(i).getDate_reg();
+					String data8 = booking.book.get(i).getCategory();
+					String data9 = booking.book.get(i).getPrice();
+					String data10 = booking.book.get(i).getMemo();
+					
+					rowdata = new Object[] {data1, data2, data3, data4, data5, data6, data7, data8, data9, data10};
+					
+					defaulttablemodel.addRow(rowdata);
+					//bookdata.removeAllElements();
+					rowdata = null;
+					System.out.println(allbookdata);
+					//defaulttablemodel.fireTableDataChanged();
+					panelc.updateUI();
 				}
-				System.out.println(allbookdata);
-				defaulttablemodel.addRow(allbookdata);
+				//defaulttablemodel.addRow(allbookdata);
+				table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 				defaulttablemodel.fireTableDataChanged();
 				panelc.updateUI();
 			}
@@ -148,10 +232,10 @@ class bookGUI extends JFrame {
 		panel.add(btnNewButton_2);
 		
 		//panelb
-		JButton btnNewButton_3 = new JButton("삭  제  하  기");
-		JLabel lblNewLabel_3 = new JLabel("     ");
-		JButton btnNewButton_4 = new JButton("메  모  변  경");
-		JLabel lblNewLabel_4 = new JLabel("     ");
+		JButton btnNewButton_3 = new JButton("삭   제   하   기");
+		JLabel lblNewLabel_3 = new JLabel("          ");
+		JButton btnNewButton_4 = new JButton("정   보   수   정");
+		JLabel lblNewLabel_4 = new JLabel("          ");
 		JButton btnNewButton_5= new JButton("현재 목록 내보내기");
 
 		panelb.add(lblNewLabel_3);
@@ -208,7 +292,7 @@ class bookGUI extends JFrame {
 			}
 		});
 
-		frame.setSize(1024, 512);
+		frame.setSize(1280, 720);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setVisible(true);
 		//menubar end
