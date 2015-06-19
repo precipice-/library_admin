@@ -1,11 +1,12 @@
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.filechooser.*;
 import javax.swing.table.*;
 
@@ -16,28 +17,54 @@ class bookGUI extends JFrame {
 	private JTextField textField;
 	private JTable table;
 	
-	
 	public bookGUI() {
-		setTitle("도서관리 프로그램_V1.0");
-		JFrame frame = new JFrame();	//제목
-		getContentPane().setLayout(null);
+		JFrame frame = new JFrame();
+		frame.setTitle("도서관리 프로그램_V1.1");
+		getContentPane().setLayout(new BorderLayout(0,0));
 		//getContentPane().setSize(1024, 512);
 		
-		JLabel label = new JLabel("검색 및 등록 :");
-		label.setBounds(24, 31, 80, 24);
-		getContentPane().add(label);		//검색바 시작
+		JPanel panel = new JPanel();
+		JPanel panelb = new JPanel();
+		JPanel panelc = new JPanel();
+		JScrollPane listJs;
 		
-		String itemlist[] = {"ISBN", "등록번호",  "제목",  "저자",  "출판사",  "출판일",  "카테고리",  "절판여부" , "등록일",  "가격",};
+		frame.add(panelb , BorderLayout.SOUTH);
+		frame.add(panel, BorderLayout.NORTH);
+		frame.add(panelc, BorderLayout.CENTER);
+		
+		//panelc
+		DefaultTableModel defaulttablemodel = null;
+		Vector<String> columnNames = null;
+		Vector<Vector<String>> data = null;
+		
+		columnNames = new Vector<String>();
+		columnNames.add("ISBN");
+		columnNames.add("제목");
+		columnNames.add("저자");
+		columnNames.add("출판사");
+		columnNames.add("출판일");
+		columnNames.add("카테고리");
+		columnNames.add("절판여부");
+		columnNames.add("등록일");
+		columnNames.add("가격");
+		columnNames.add("메모");
+		data = new Vector<Vector<String>>();
+		//data.addRow("ISBN", "등록번호",  "제목",  "저자",  "출판사",  "출판일",  "카테고리",  "절판여부" , "등록일",  "가격");
+		
+		
+		defaulttablemodel = new DefaultTableModel(columnNames, 0);
+		table = new JTable(defaulttablemodel);
+		listJs = new JScrollPane(table);
+		panelc.add(listJs);
+		table.setCellSelectionEnabled(true);
+
+				
+		//panelb  
+		JLabel label = new JLabel("등록 및 검색      :        ");
+		
+		String itemlist[] = {"ISBN", "등록번호",  "제목",  "저자",  "출판사",  "출판일",  "카테고리",  "절판여부" , "등록일",  "가격"};
 		
 		JComboBox comboBox = new JComboBox(itemlist);
-	    comboBox.setBounds(111, 34, 68, 21);
-	    getContentPane().add(comboBox);
-		
-		textField = new JTextField();
-		textField.setBounds(190, 33, 489, 21);
-		getContentPane().add(textField);
-		textField.setColumns(25);
-		
 		String finder = comboBox.getSelectedItem().toString();
 		int finderx = 0;
 		for (int i = 0; i < 10; i++){
@@ -46,9 +73,11 @@ class bookGUI extends JFrame {
 			}
 		} // combobox 값 가져오기
 		
-		JButton btnNewButton = new JButton("등록");
-		btnNewButton.setBounds(700, 32, 80, 23);
-		getContentPane().add(btnNewButton);
+		textField = new JTextField();
+		textField.setColumns(25);
+		  
+		JLabel lblNewLabel = new JLabel("        ");
+		JButton btnNewButton = new JButton("등   록");
 		
 		btnNewButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -57,54 +86,83 @@ class bookGUI extends JFrame {
 			}
 		});
 		
-		JButton btnNewButton_02 = new JButton("검색");
-		btnNewButton_02.setBounds(800, 32, 80, 23);
-		getContentPane().add(btnNewButton_02);
+		JLabel lblNewLabel_1 = new JLabel("     ");
+		JButton btnNewButton_1 = new JButton("검   색");
 		
-		JButton btnNewButton_1 = new JButton("전체조회");
-		btnNewButton_1.setBounds(900, 32, 80, 23);
-		getContentPane().add(btnNewButton_1);		//검색바 끝
 		
-		JPanel panel = new JPanel();
-		panel.setBounds(12, 80, 984, 307);
-		getContentPane().add(panel);	//표 판넬
-		String[] columnNames = {"ISBN", "제목", "저자", "출판사", "출판일", "카테고리", "절판여부", "등록일", "가격",  "메모"};
-		Object[][] data = {{}};
-		table = new JTable(data, columnNames);
 		
-		Vector<String> userColumn = new Vector<String>();
-		DefaultTableModel model;
-		Object[][] tabledata = {{}};
-
-		//booking.book.get(i).get(itemlist[finderx])  combobox
+		JLabel lblNewLabel_2 = new JLabel("     ");
 		
-		btnNewButton_1.addActionListener(new ActionListener(){
+		JButton btnNewButton_2 = new JButton("전체 조회");
+		btnNewButton_2.addActionListener(new ActionListener(){
+			@Override
 			public void actionPerformed(ActionEvent e){
+				final Vector<String> columnNames= new Vector<String>();
+				final Vector<Vector<String>> data = new Vector<Vector<String>>();
+				columnNames.add("ISBN");
+				columnNames.add("제목");
+				columnNames.add("저자");
+				columnNames.add("출판사");
+				columnNames.add("출판일");
+				columnNames.add("카테고리");
+				columnNames.add("절판여부");
+				columnNames.add("등록일");
+				columnNames.add("가격");
+				columnNames.add("메모");	
+				final DefaultTableModel defaulttablemodel = new DefaultTableModel(columnNames, data);
+				Vector<Vector<String>> allbookdata = new Vector<Vector<String>>();
+				Vector<String> bookdata = new Vector<String>();
+				final JTable table = new JTable(defaulttablemodel);
 				for (int i = 0; i < booking.book.size(); i++){
-					tabledata[i][0] = booking.book.get(i).getIsbn();
-					tabledata[i][1] = booking.book.get(i).getTitle();
-					tabledata[i][2] = booking.book.get(i).getAuthor();
-					tabledata[i][3] = booking.book.get(i).getPublisher();
-					tabledata[i][4] = booking.book.get(i).getDate();
-					tabledata[i][5] = booking.book.get(i).getCategory();
-					tabledata[i][6] = booking.book.get(i).getSale();
-					tabledata[i][7] = booking.book.get(i).getDate_reg();
-					tabledata[i][8] = booking.book.get(i).getPrice();
-					tabledata[i][9] = booking.book.get(i).getMemo();
+					String sale = null;
+					if (booking.book.get(i).getSale() == true){
+						sale = "Y";
+					} else {sale = "N";}
+					bookdata.add(booking.book.get(i).getIsbn());
+					bookdata.add(booking.book.get(i).getTitle());
+					bookdata.add(booking.book.get(i).getAuthor());
+					bookdata.add(booking.book.get(i).getPublisher());
+					bookdata.add(booking.book.get(i).getDate());
+					bookdata.add(sale);
+					bookdata.add(booking.book.get(i).getDate_reg());
+					bookdata.add(booking.book.get(i).getCategory());
+					bookdata.add(booking.book.get(i).getPrice());
+					bookdata.add(booking.book.get(i).getMemo());
+					allbookdata.add(bookdata);
 				}
-				table = new JTable(tabledata, columnNames);
-				table.tableChanged(new TableModelEvent(table.getModel()));
-				//테이블 업데이트
+				System.out.println(allbookdata);
+				defaulttablemodel.addRow(allbookdata);
+				defaulttablemodel.fireTableDataChanged();
+				panelc.updateUI();
 			}
 		});
+			
+		panel.add(label);
+		panel.add(comboBox);
+		panel.add(textField);
+		panel.add(lblNewLabel_2);
+		panel.add(btnNewButton_1);
+		panel.add(lblNewLabel_1);
+		panel.add(btnNewButton);
+		panel.add(lblNewLabel);
+		panel.add(btnNewButton_2);
 		
-		table.setCellSelectionEnabled(true);
-		panel.add(table);		//표 끝
-		
+		//panelb
+		JButton btnNewButton_3 = new JButton("삭  제  하  기");
+		JLabel lblNewLabel_3 = new JLabel("     ");
+		JButton btnNewButton_4 = new JButton("메  모  변  경");
+		JLabel lblNewLabel_4 = new JLabel("     ");
+		JButton btnNewButton_5= new JButton("현재 목록 내보내기");
+
+		panelb.add(lblNewLabel_3);
+		panelb.add(lblNewLabel_4);
+		panelb.add(btnNewButton_4);
+		panelb.add(btnNewButton_3);
+		panelb.add(btnNewButton_5);
+	
+		//menubar
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 1008, 21);
-		getContentPane().add(menuBar);	//메뉴바
-		
+		frame.setJMenuBar(menuBar);
 		JMenu menu = new JMenu("파  일");
 		menuBar.add(menu);
 		
@@ -149,33 +207,27 @@ class bookGUI extends JFrame {
 				JOptionPane.showMessageDialog(null, "Github 주소 : https://github.com/precipice-/library_admin ");
 			}
 		});
-		
-		JButton btnNewButton_2 = new JButton("삭제하기");
-		btnNewButton_2.setBounds(140, 400, 137, 49);
-		getContentPane().add(btnNewButton_2);		//밑줄 버튼
-		
-		JButton button = new JButton("같은 도서 추가");
-		button.setBounds(432, 400, 137, 49);
-		getContentPane().add(button);
-		
-		JButton button_1 = new JButton("현재 목록 내보내기");
-		button_1.setBounds(712, 400, 137, 49);
-		getContentPane().add(button_1);		//버튼 끝
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		pack();
-	    setVisible(true);
+
+		frame.setSize(1024, 512);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.setVisible(true);
+		//menubar end
 	}
 }
+
 
 public class booking{
 	   public static ArrayList<Book> book = new ArrayList<Book>();
 	   public static int bookcounter = 0;
+
 	   public static void main(String[] args) {
 	      // TODO Auto-generated method stub
 	      bookGUI bg = new bookGUI();
 	   }
 	   
+		/**
+		 * @wbp.parser.entryPoint
+		 */
 		public static void getinfo(String isbn){
 			try	{
 				String domain = "http://apis.daum.net/search/book?apikey=54edcd349fb863882aed3c5b0a5a7349&q=" + isbn + "&output=json";
@@ -317,4 +369,4 @@ public class booking{
 				}catch(IOException ioe){}
 			} // finally
 		}
-}
+	}
